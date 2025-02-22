@@ -1,79 +1,74 @@
-import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, Dimensions, Platform, Text } from 'react-native';
-import { WebView } from 'react-native-webview';
+import React from 'react';
+import { View, Text, StyleSheet, FlatList, Platform, Dimensions } from 'react-native';
+import { Video } from 'react-native-video';
 
-// Check if `react-native-video` is available
-let Video;
-if (Platform.OS !== 'web') {
-  try {
-    Video = require('react-native-video').default;
-  } catch (error) {
-    console.error("❌ Error loading react-native-video:", error);
-  }
-}
+const { width, height } = Dimensions.get('window');
+
+const bettingData = [
+  { time: '17:19:44', col2: 'Item 68', col3: 'Item 78', col4: 'Item 74', col5: 'Item 25' },
+  { time: '17:19:43', col2: 'Item 62', col3: 'Item 22', col4: 'Item 39', col5: 'Item 55' },
+  { time: '17:19:42', col2: 'Item 11', col3: 'Item 85', col4: 'Item 17', col5: 'Item 42' },
+  { time: '17:19:41', col2: 'Item 99', col3: 'Item 31', col4: 'Item 56', col5: 'Item 78' },
+  { time: '17:19:40', col2: 'Item 45', col3: 'Item 67', col4: 'Item 23', col5: 'Item 91' },
+];
 
 const App = () => {
-  const [currentTime, setCurrentTime] = useState(new Date().toLocaleTimeString());
-  const [screenSize, setScreenSize] = useState(Dimensions.get('window'));
-
-  useEffect(() => {
-    // Update dimensions when screen size changes
-    const onResize = () => setScreenSize(Dimensions.get('window'));
-
-    Dimensions.addEventListener('change', onResize);
-    return () => Dimensions.removeEventListener('change', onResize);
-  }, []);
-
-  useEffect(() => {
-    // Update time every second
-    const interval = setInterval(() => {
-      setCurrentTime(new Date().toLocaleTimeString());
-    }, 1000);
-    
-    return () => clearInterval(interval);
-  }, []);
-
   return (
-    <View style={[styles.container, { height: screenSize.height }]}>
-      {/* Main Header (Full Width) */}
-      <View style={styles.mainHeader}>
-        <Text style={styles.mainHeaderText}>📺 My Custom TV App</Text>
+    <View style={styles.container}>
+      
+      {/* Header */}
+      <View style={styles.header}>
+        <Text style={styles.headerText}>📺 My Custom TV App</Text>
       </View>
 
-      <View style={styles.content}>
-        {/* Left Side: Video / Content */}
-        <View style={styles.leftPanel}>
-          {Platform.OS !== 'web' && Video ? (
-            <Video 
-              source={{ uri: 'https://yourvideourl.com/video.mp4' }}
-              style={styles.video}
-              resizeMode="cover"
-              repeat
-              controls={false}
-            />
+      {/* Full-Screen Main Content */}
+      <View style={styles.contentContainer}>
+        
+        {/* Video Section */}
+        <View style={styles.videoContainer}>
+          {Platform.OS === 'web' ? (
+            <Text style={styles.videoFallback}>🎬 Video Not Supported on Web</Text>
           ) : (
-            <Text style={styles.notSupportedText}>
-              Video not supported on Web
-            </Text>
+            <Video
+              source={{ uri: 'https://www.example.com/video.mp4' }} // Replace with actual video URL
+              style={styles.video}
+              controls
+              resizeMode="contain"
+            />
           )}
         </View>
 
-        {/* Right Side: Header + Five Columns */}
-        <View style={styles.rightSection}>
-          {/* Header for the Columns Only */}
-          <View style={styles.columnHeader}>
-            <Text style={styles.columnHeaderText}>🔹 Column Section</Text>
-          </View>
+        {/* Betting Board */}
+        <View style={styles.boardContainer}>
+          <Text style={styles.bettingHeader}>⚡ Betting Board</Text>
+          <View style={styles.table}>
+            
+            {/* Table Header */}
+            <View style={styles.tableHeader}>
+              <Text style={styles.columnHeader}>Time</Text>
+              <Text style={styles.columnHeader}>Col 2</Text>
+              <Text style={styles.columnHeader}>Col 3</Text>
+              <Text style={styles.columnHeader}>Col 4</Text>
+              <Text style={styles.columnHeader}>Col 5</Text>
+            </View>
 
-          {/* Five Vertical Columns */}
-          <View style={styles.rightPanel}>
-            <View style={styles.column}><Text style={styles.text}>🕒 {currentTime}</Text></View>
-            <View style={styles.column}><Text style={styles.text}>Column 2</Text></View>
-            <View style={styles.column}><Text style={styles.text}>Column 3</Text></View>
-            <View style={styles.column}><Text style={styles.text}>Column 4</Text></View>
-            <View style={styles.column}><Text style={styles.text}>Column 5</Text></View>
+            {/* Table Rows */}
+            <FlatList
+              data={bettingData}
+              keyExtractor={(item) => item.time}
+              renderItem={({ item, index }) => (
+                <View style={[styles.row, index % 2 === 0 ? styles.rowEven : styles.rowOdd]}>
+                  <Text style={styles.cell}>{item.time}</Text>
+                  <Text style={styles.cell}>{item.col2}</Text>
+                  <Text style={styles.cell}>{item.col3}</Text>
+                  <Text style={styles.cell}>{item.col4}</Text>
+                  <Text style={styles.cell}>{item.col5}</Text>
+                </View>
+              )}
+            />
           </View>
         </View>
+
       </View>
     </View>
   );
@@ -82,81 +77,88 @@ const App = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#000',
+    backgroundColor: '#181818',
+    width: width, // Full width
+    height: height, // Full height
   },
-  mainHeader: {
-    width: '100%',
-    height: 50,
-    backgroundColor: 'black',
-    justifyContent: 'center',
+  header: {
+    backgroundColor: '#222',
+    paddingVertical: 15,
     alignItems: 'center',
     borderBottomWidth: 2,
-    borderBottomColor: 'white',
+    borderBottomColor: '#FFD700',
   },
-  mainHeaderText: {
-    color: 'white',
-    fontSize: 18,
+  headerText: {
+    fontSize: 24,
     fontWeight: 'bold',
+    color: '#FFD700',
   },
-  content: {
+  contentContainer: {
     flex: 1,
     flexDirection: 'row',
+    width: '100%',
+    height: '100%', // Ensures full height
   },
-  leftPanel: {
-    flex: 0.55,
+  videoContainer: {
+    flex: 1.5,
     backgroundColor: '#111',
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  video: {
-    width: '100%',
     height: '100%',
   },
-  notSupportedText: {
-    color: 'white',
-    fontSize: 16,
-    textAlign: 'center',
-  },
-
-  // Right section (Column Header + Columns)
-  rightSection: {
-    flex: 0.45,
-  },
-
-  // Sub-header only for the columns
-  columnHeader: {
-    width: '100%',
-    height: 40,
-    backgroundColor: '#222',
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderBottomWidth: 2,
-    borderBottomColor: 'white',
-  },
-  columnHeaderText: {
-    color: 'white',
-    fontSize: 16,
+  videoFallback: {
+    color: '#FFF',
+    fontSize: 18,
     fontWeight: 'bold',
   },
-
-  rightPanel: {
-    flex: 1,
-    flexDirection: 'row',
+  video: {
+    width: '90%',
+    height: '90%',
+  },
+  boardContainer: {
+    flex: 2,
+    padding: 20,
     backgroundColor: '#222',
-    justifyContent: 'space-between',
-    paddingHorizontal: 5,
+    height: '100%',
   },
-  column: {
-    flex: 1,
+  bettingHeader: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    color: '#FFD700',
+    marginBottom: 10,
+    textAlign: 'center',
+  },
+  table: {
     borderWidth: 1,
-    borderColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginHorizontal: 2,
+    borderColor: '#FFD700',
+    borderRadius: 5,
+    overflow: 'hidden',
   },
-  text: {
-    color: 'white',
-    fontSize: 16,
+  tableHeader: {
+    flexDirection: 'row',
+    backgroundColor: '#333',
+    paddingVertical: 8,
+  },
+  columnHeader: {
+    flex: 1,
+    fontWeight: 'bold',
+    color: '#FFF',
+    textAlign: 'center',
+  },
+  row: {
+    flexDirection: 'row',
+    paddingVertical: 6,
+  },
+  rowEven: {
+    backgroundColor: '#292929',
+  },
+  rowOdd: {
+    backgroundColor: '#181818',
+  },
+  cell: {
+    flex: 1,
+    color: '#FFF',
+    textAlign: 'center',
   },
 });
 
