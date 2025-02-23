@@ -54,7 +54,7 @@ const VideoPlayer = () => {
   );
 };
 
-const ResultBox = ({ result }) => {
+const ResultBox = ({ result, hideResultTime }) => {
   const fadeAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
@@ -68,7 +68,7 @@ const ResultBox = ({ result }) => {
   return (
     <Animated.View style={[styles.resultBox, { opacity: fadeAnim }]}>
       <Text style={styles.resultValue}>{result.value}</Text>
-      <Text style={styles.resultTime}>{result.time}</Text>
+      {!hideResultTime && <Text style={styles.resultTime}>{result.time}</Text>}
     </Animated.View>
   );
 };
@@ -91,7 +91,7 @@ const TimeCard = ({ time }) => {
   );
 };
 
-const BettingRow = ({ rowData, showTimeCard }) => {
+const BettingRow = ({ rowData, showTimeCard, hideResultTime }) => {
   return (
     <View style={styles.row}>
       <View style={styles.timeColumn}>
@@ -99,7 +99,7 @@ const BettingRow = ({ rowData, showTimeCard }) => {
       </View>
       {rowData.results.map((result, idx) => (
         <View key={idx} style={styles.resultBoxWrapper}>
-          <ResultBox result={result} />
+          <ResultBox result={result} hideResultTime={hideResultTime} />
         </View>
       ))}
     </View>
@@ -192,7 +192,11 @@ const App = () => {
           {item.header}
         </Text>
       )}
-      <BettingRow rowData={item} showTimeCard={showTimeCard} />
+      <BettingRow 
+        rowData={item} 
+        showTimeCard={showTimeCard} 
+        hideResultTime={item.id === 'bhagyashri2'} 
+      />
     </View>
   );
 
@@ -201,7 +205,7 @@ const App = () => {
       <View style={styles.mainHeader}>
         <Text style={styles.mainHeaderText}>
           Lorem Ipsum is simply dummy text of the printing and typesetting
-          industry giving information byon its origins ...
+          industry giving information byon its
         </Text>
       </View>
 
@@ -234,23 +238,34 @@ const styles = StyleSheet.create({
     backgroundColor: '#000',
   },
   mainHeader: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: 100,
     backgroundColor: '#fff',
     paddingVertical: 16,
     paddingHorizontal: 20,
   },
   mainHeaderText: {
     color: '#000',
-    fontSize: 18,
+    fontSize: 30,
     fontWeight: 'bold',
     textAlign: 'center',
   },
   content: {
     flex: 1,
     flexDirection: 'row',
+    backgroundColor: '#fff',
   },
   videoSection: {
-    flex: 1,
+    flex: 0.45, // Changed from 0.4 to 0.45 (45% of screen width)
     backgroundColor: '#333',
+    borderRightWidth: 1,
+    borderRightColor: '#000',
+  },
+  resultsSection: {
+    flex: 0.55, // Changed from 0.6 to 0.55 (55% of screen width)
+    padding: 10,
+    backgroundColor: '#fff',
   },
   videoWrapper: {
     flex: 1,
@@ -274,11 +289,6 @@ const styles = StyleSheet.create({
   videoTime: {
     color: '#fff',
     fontSize: 14,
-  },
-  resultsSection: {
-    flex: 1,
-    padding: 10,
-    backgroundColor: '#fff',
   },
   resultCard: {
     flex: 1,
@@ -312,7 +322,17 @@ const styles = StyleSheet.create({
     width: 80,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingVertical: 12,
+    paddingVertical: 8,  // reduced from 12
+    borderWidth: 1,
+    borderColor: '#000',
+    borderRadius: 6,     // added to match result box
+    backgroundColor: '#fff',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.2,
+    shadowRadius: 2,
+    elevation: 3,
+    margin: 4,
   },
   timeText: {
     color: '#ff0000',
