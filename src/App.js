@@ -1,75 +1,229 @@
-import React from 'react';
-import { View, Text, StyleSheet, FlatList, Platform, Dimensions } from 'react-native';
+import React, { useState, useEffect, useRef } from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  FlatList,
+  Platform,
+  Dimensions,
+  Animated,
+  Easing,
+} from 'react-native';
 import { Video } from 'react-native-video';
 
 const { width, height } = Dimensions.get('window');
 
-const bettingData = [
-  { time: '17:19:44', col2: 'Item 68', col3: 'Item 78', col4: 'Item 74', col5: 'Item 25' },
-  { time: '17:19:43', col2: 'Item 62', col3: 'Item 22', col4: 'Item 39', col5: 'Item 55' },
-  { time: '17:19:42', col2: 'Item 11', col3: 'Item 85', col4: 'Item 17', col5: 'Item 42' },
-  { time: '17:19:41', col2: 'Item 99', col3: 'Item 31', col4: 'Item 56', col5: 'Item 78' },
-  { time: '17:19:40', col2: 'Item 45', col3: 'Item 67', col4: 'Item 23', col5: 'Item 91' },
-];
+const generateNewResult = () => ({
+  value: '123/5',
+  time: '08:30',
+});
+
+const shiftResults = (results) => {
+  const newResults = [...results];
+  newResults.splice(4, 1); // Remove the fifth item
+  newResults.unshift(generateNewResult()); // Add a new item at the beginning
+  return newResults;
+};
+
+const VideoPlayer = () => {
+  if (Platform.OS === 'web') {
+    return (
+      <View style={styles.videoWrapper}>
+        <video controls style={styles.video}>
+          <source src="https://www.example.com/video.mp4" type="video/mp4" />
+        </video>
+        <View style={styles.videoControls}>
+          <Text style={styles.videoTime}>0:00</Text>
+        </View>
+      </View>
+    );
+  }
+  return (
+    <View style={styles.videoWrapper}>
+      <Video
+        source={{ uri: 'https://www.example.com/video.mp4' }}
+        style={styles.video}
+        controls
+        resizeMode="contain"
+        onError={error => console.error('Video Error:', error)}
+      />
+      <View style={styles.videoControls}>
+        <Text style={styles.videoTime}>0:00</Text>
+      </View>
+    </View>
+  );
+};
+
+const ResultBox = ({ result }) => {
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    Animated.timing(fadeAnim, {
+      toValue: 1,
+      duration: 800,
+      useNativeDriver: true,
+    }).start();
+  }, [result]);
+
+  return (
+    <Animated.View style={[styles.resultBox, { opacity: fadeAnim }]}>
+      <Text style={styles.resultValue}>{result.value}</Text>
+      <Text style={styles.resultTime}>{result.time}</Text>
+    </Animated.View>
+  );
+};
+
+const TimeCard = ({ time }) => {
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    Animated.timing(fadeAnim, {
+      toValue: 1,
+      duration: 500,
+      useNativeDriver: true,
+    }).start();
+  }, []);
+
+  return (
+    <Animated.View style={[styles.timeCard, { opacity: fadeAnim }]}>
+      <Text style={styles.timeCardText}>{time}</Text>
+    </Animated.View>
+  );
+};
+
+const BettingRow = ({ rowData, showTimeCard }) => {
+  return (
+    <View style={styles.row}>
+      <View style={styles.timeColumn}>
+        <Text style={styles.timeText}>{rowData.time}</Text>
+      </View>
+      {rowData.results.map((result, idx) => (
+        <View key={idx} style={styles.resultBoxWrapper}>
+          <ResultBox result={result} />
+        </View>
+      ))}
+    </View>
+  );
+};
 
 const App = () => {
+  const [rows, setRows] = useState([
+    {
+      id: 'bhagyashri1',
+      header: 'bhagyashri',
+      time: '08:00',
+      results: Array(4).fill().map(() => generateNewResult()),
+    },
+    {
+      id: 'bhagyashri2',
+      header: null,
+      time: '08:00',
+      results: Array(4).fill().map(() => generateNewResult()),
+    },
+    {
+      id: 'market1',
+      header: 'Market 1',
+      time: '08:00',
+      results: Array(4).fill().map(() => generateNewResult()),
+    },
+    {
+      id: 'market2',
+      header: 'Market 2',
+      time: '08:00',
+      results: Array(4).fill().map(() => generateNewResult()),
+    },
+    {
+      id: 'market3',
+      header: 'Market 3',
+      time: '08:00',
+      results: Array(4).fill().map(() => generateNewResult()),
+    },
+    {
+      id: 'market4',
+      header: 'Market 4',
+      time: '08:00',
+      results: Array(4).fill().map(() => generateNewResult()),
+    },
+    {
+      id: 'market5',
+      header: 'Market 5',
+      time: '08:00',
+      results: Array(4).fill().map(() => generateNewResult()),
+    },
+    {
+      id: 'market6',
+      header: 'Market 6',
+      time: '08:00',
+      results: Array(4).fill().map(() => generateNewResult()),
+    },
+  ]);
+  const [showTimeCard, setShowTimeCard] = useState(false);
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      setRows(currentRows => {
+        return currentRows.map(row => ({
+          ...row,
+          results: shiftResults(row.results),
+        }));
+      });
+      setShowTimeCard(prev => !prev);
+      Animated.timing(fadeAnim, {
+        toValue: 1,
+        duration: 500,
+        useNativeDriver: true,
+      }).start(() => {
+        fadeAnim.setValue(0);
+      });
+    }, 4000);
+
+    return () => clearInterval(intervalId);
+  }, []);
+
+  const renderItem = ({ item }) => (
+    <View style={styles.itemContainer}>
+      {item.header && (
+        <Text
+          style={[
+            styles.rowHeader,
+            item.header === 'bhagyashri' ? styles.bhagyashriHeader : styles.marketHeader,
+          ]}>
+          {item.header}
+        </Text>
+      )}
+      <BettingRow rowData={item} showTimeCard={showTimeCard} />
+    </View>
+  );
+
   return (
     <View style={styles.container}>
-      
-      {/* Header */}
-      <View style={styles.header}>
-        <Text style={styles.headerText}>📺 My Custom TV App</Text>
+      <View style={styles.mainHeader}>
+        <Text style={styles.mainHeaderText}>
+          Lorem Ipsum is simply dummy text of the printing and typesetting
+          industry giving information byon its origins ...
+        </Text>
       </View>
 
-      {/* Full-Screen Main Content */}
-      <View style={styles.contentContainer}>
-        
-        {/* Video Section */}
-        <View style={styles.videoContainer}>
-          {Platform.OS === 'web' ? (
-            <Text style={styles.videoFallback}>🎬 Video Not Supported on Web</Text>
-          ) : (
-            <Video
-              source={{ uri: 'https://www.example.com/video.mp4' }} // Replace with actual video URL
-              style={styles.video}
-              controls
-              resizeMode="contain"
-            />
-          )}
+      <View style={styles.content}>
+        <View style={styles.videoSection}>
+          <VideoPlayer />
         </View>
 
-        {/* Betting Board */}
-        <View style={styles.boardContainer}>
-          <Text style={styles.bettingHeader}>⚡ Betting Board</Text>
-          <View style={styles.table}>
-            
-            {/* Table Header */}
-            <View style={styles.tableHeader}>
-              <Text style={styles.columnHeader}>Time</Text>
-              <Text style={styles.columnHeader}>Col 2</Text>
-              <Text style={styles.columnHeader}>Col 3</Text>
-              <Text style={styles.columnHeader}>Col 4</Text>
-              <Text style={styles.columnHeader}>Col 5</Text>
-            </View>
-
-            {/* Table Rows */}
+        <View style={styles.resultsSection}>
+          <View style={styles.resultCard}>
             <FlatList
-              data={bettingData}
-              keyExtractor={(item) => item.time}
-              renderItem={({ item, index }) => (
-                <View style={[styles.row, index % 2 === 0 ? styles.rowEven : styles.rowOdd]}>
-                  <Text style={styles.cell}>{item.time}</Text>
-                  <Text style={styles.cell}>{item.col2}</Text>
-                  <Text style={styles.cell}>{item.col3}</Text>
-                  <Text style={styles.cell}>{item.col4}</Text>
-                  <Text style={styles.cell}>{item.col5}</Text>
-                </View>
-              )}
+              data={rows}
+              renderItem={renderItem}
+              keyExtractor={item => item.id}
+              showsVerticalScrollIndicator={false}
             />
           </View>
         </View>
-
       </View>
+      <Animated.View style={[styles.fadeContainer, { opacity: fadeAnim }]}>
+        <Text style={styles.fadeText}>New Results Updated!</Text>
+      </Animated.View>
     </View>
   );
 };
@@ -77,88 +231,159 @@ const App = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#181818',
-    width: width, // Full width
-    height: height, // Full height
+    backgroundColor: '#000',
   },
-  header: {
-    backgroundColor: '#222',
-    paddingVertical: 15,
-    alignItems: 'center',
-    borderBottomWidth: 2,
-    borderBottomColor: '#FFD700',
+  mainHeader: {
+    backgroundColor: '#fff',
+    paddingVertical: 16,
+    paddingHorizontal: 20,
   },
-  headerText: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#FFD700',
-  },
-  contentContainer: {
-    flex: 1,
-    flexDirection: 'row',
-    width: '100%',
-    height: '100%', // Ensures full height
-  },
-  videoContainer: {
-    flex: 1.5,
-    backgroundColor: '#111',
-    justifyContent: 'center',
-    alignItems: 'center',
-    height: '100%',
-  },
-  videoFallback: {
-    color: '#FFF',
+  mainHeaderText: {
+    color: '#000',
     fontSize: 18,
     fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  content: {
+    flex: 1,
+    flexDirection: 'row',
+  },
+  videoSection: {
+    flex: 1,
+    backgroundColor: '#333',
+  },
+  videoWrapper: {
+    flex: 1,
+    position: 'relative',
   },
   video: {
-    width: '90%',
-    height: '90%',
-  },
-  boardContainer: {
-    flex: 2,
-    padding: 20,
-    backgroundColor: '#222',
+    width: '100%',
     height: '100%',
   },
-  bettingHeader: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    color: '#FFD700',
-    marginBottom: 10,
-    textAlign: 'center',
-  },
-  table: {
-    borderWidth: 1,
-    borderColor: '#FFD700',
-    borderRadius: 5,
-    overflow: 'hidden',
-  },
-  tableHeader: {
+  videoControls: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: 40,
+    backgroundColor: 'rgba(0, 0, 0, 0.7)',
     flexDirection: 'row',
-    backgroundColor: '#333',
-    paddingVertical: 8,
+    alignItems: 'center',
+    paddingHorizontal: 10,
   },
-  columnHeader: {
+  videoTime: {
+    color: '#fff',
+    fontSize: 14,
+  },
+  resultsSection: {
     flex: 1,
-    fontWeight: 'bold',
-    color: '#FFF',
-    textAlign: 'center',
+    padding: 10,
+    backgroundColor: '#fff',
+  },
+  resultCard: {
+    flex: 1,
+    backgroundColor: 'transparent',
+  },
+  itemContainer: {
+    marginBottom: 10,
+    marginHorizontal: 10,
   },
   row: {
     flexDirection: 'row',
-    paddingVertical: 6,
+    backgroundColor: '#fff',
   },
-  rowEven: {
-    backgroundColor: '#292929',
-  },
-  rowOdd: {
-    backgroundColor: '#181818',
-  },
-  cell: {
-    flex: 1,
-    color: '#FFF',
+  rowHeader: {
+    fontWeight: 'bold',
+    color: '#fff',
     textAlign: 'center',
+    backgroundColor: '#000',
+  },
+  bhagyashriHeader: {
+    fontSize: 16,
+    padding: 8,
+  },
+  marketHeader: {
+    fontSize: 11,
+    padding: 4,  // reduced padding
+    paddingVertical: 2,  // even smaller vertical padding
+    backgroundColor: '#333',  // slightly lighter background
+  },
+  timeColumn: {
+    width: 80,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: 12,
+  },
+  timeText: {
+    color: '#ff0000',
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  resultBoxWrapper: {
+    flex: 1,
+    overflow: 'hidden',
+  },
+  resultBox: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 12,
+    borderRadius: 6,
+    backgroundColor: '#fff',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.2,
+    shadowRadius: 2,
+    elevation: 3,
+    margin: 4,
+    borderColor: '#000',
+    borderWidth: 1,
+  },
+  resultValue: {
+    fontSize: 16,
+    color: '#000',
+    fontWeight: '500',
+  },
+  resultTime: {
+    fontSize: 12,
+    color: '#ff0000',
+    marginTop: 4,
+  },
+  timeCard: {
+    width: 80,
+    height: 50,
+    backgroundColor: '#fff',
+    borderRadius: 15,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderColor: '#000',
+    borderWidth: 1,
+    opacity: 0,
+  },
+  timeCardText: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: '#000',
+    textAlign: 'center',
+  },
+  fadeContainer: {
+    position: 'absolute',
+    top: 50,
+    left: 0,
+    right: 0,
+    alignItems: 'center',
+  },
+  fadeText: {
+    fontSize: 18,
+    color: '#fff',
+    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+    padding: 10,
+    borderRadius: 5,
   },
 });
 
