@@ -25,9 +25,9 @@ module.exports = {
               '@babel/preset-typescript'
             ],
             plugins: [
-              ['@babel/plugin-proposal-class-properties', { loose: false }],
-              ['@babel/plugin-proposal-private-methods', { loose: false }],
-              ['@babel/plugin-proposal-private-property-in-object', { loose: false }]
+              '@babel/plugin-proposal-class-properties',
+              '@babel/plugin-proposal-private-methods',
+              '@babel/plugin-proposal-private-property-in-object'
             ]
           }
         }
@@ -35,6 +35,10 @@ module.exports = {
       {
         test: /\.(mp4|webm)$/,
         use: 'file-loader'
+      },
+      {
+        test: /\.(png|jpe?g|gif|svg)$/i,
+        type: 'asset/resource'
       }
     ]
   },
@@ -46,20 +50,21 @@ module.exports = {
     fallback: {
       'react-native-video': false,
       module: false,
+      process: false
     },
     preferRelative: true,
     mainFields: ['browser', 'module', 'main']
   },
   plugins: [
     new HtmlWebpackPlugin({
-      template: './public/index.html',
-      favicon: './public/favicon.ico'
+      template: './public/index.html'
     }),
     new webpack.ProvidePlugin({
-      process: 'process/browser',
+      process: 'process'
     }),
     new webpack.DefinePlugin({
-      'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development')
+      'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development'),
+      'process.env': JSON.stringify(process.env)
     }),
     new webpack.NoEmitOnErrorsPlugin(),
     new webpack.ProgressPlugin()
@@ -76,7 +81,7 @@ module.exports = {
       directory: path.join(__dirname, 'public'),
     },
     compress: true,
-    port: 8080,
+    port: 'auto', // This will automatically find an available port
     hot: true,
     historyApiFallback: true,
     client: {

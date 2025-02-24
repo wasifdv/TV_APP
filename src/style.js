@@ -32,15 +32,22 @@ export const styles = StyleSheet.create({
   gridContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    width: '100%',
+    transform: [{ translateZ: 0 }], // Hardware acceleration
   },
   gridItem: {
-    width: '30%',
-    margin: '1%',
+    width: '32%',
+    marginBottom: 10,
+    aspectRatio: 1,
     padding: 10,
     borderWidth: 2,
     borderColor: '#000',
     alignItems: 'center',
     justifyContent: 'center',
+    transform: [{ translateZ: 0 }], // Hardware acceleration
+    willChange: 'transform', // Performance hint
   },
   timeText: {
     color: 'red',
