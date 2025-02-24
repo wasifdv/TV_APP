@@ -20,8 +20,9 @@ const generateNewResult = () => ({
 
 const shiftResults = (results) => {
   const newResults = [...results];
-  newResults.splice(4, 1); // Remove the fifth item
-  newResults.unshift(generateNewResult()); // Add a new item at the beginning
+  // Remove the last element instead of the non-existent 5th element
+  newResults.splice(newResults.length - 1, 1);
+  newResults.unshift(generateNewResult());
   return newResults;
 };
 
@@ -115,49 +116,49 @@ const App = () => {
       id: 'bhagyashri1',
       header: 'bhagyashri',
       time: '08:00',
-      results: Array(4).fill().map(() => generateNewResult()),
+      results: Array(5).fill().map(() => generateNewResult()),
     },
     {
       id: 'bhagyashri2',
       header: null,
       time: '08:00',
-      results: Array(4).fill().map(() => generateNewResult()),
+      results: Array(5).fill().map(() => generateNewResult()),
     },
     {
       id: 'market1',
       header: 'Market 1',
       time: '08:00',
-      results: Array(4).fill().map(() => generateNewResult()),
+      results: Array(5).fill().map(() => generateNewResult()),
     },
     {
       id: 'market2',
       header: 'Market 2',
       time: '08:00',
-      results: Array(4).fill().map(() => generateNewResult()),
+      results: Array(5).fill().map(() => generateNewResult()),
     },
     {
       id: 'market3',
       header: 'Market 3',
       time: '08:00',
-      results: Array(4).fill().map(() => generateNewResult()),
+      results: Array(5).fill().map(() => generateNewResult()),
     },
     {
       id: 'market4',
       header: 'Market 4',
       time: '08:00',
-      results: Array(4).fill().map(() => generateNewResult()),
+      results: Array(5).fill().map(() => generateNewResult()),
     },
     {
       id: 'market5',
       header: 'Market 5',
       time: '08:00',
-      results: Array(4).fill().map(() => generateNewResult()),
+      results: Array(5).fill().map(() => generateNewResult()),
     },
     {
       id: 'market6',
       header: 'Market 6',
       time: '08:00',
-      results: Array(4).fill().map(() => generateNewResult()),
+      results: Array(5).fill().map(() => generateNewResult()),
     },
   ]);
   const [showTimeCard, setShowTimeCard] = useState(false);
@@ -238,18 +239,18 @@ const App = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#000',
+    backgroundColor: '#fff', // changed from dark to white
   },
   mainHeader: {
     justifyContent: 'center',
     alignItems: 'center',
     height: 100,
-    backgroundColor: '#fff',
+    backgroundColor: '#fff', // remains white
     paddingVertical: 16,
     paddingHorizontal: 20,
   },
   mainHeaderText: {
-    color: '#000',
+    color: '#000', // darker text for readability
     fontSize: 30,
     fontWeight: 'bold',
     textAlign: 'center',
@@ -260,13 +261,13 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   videoSection: {
-    flex: 0.45, // Changed from 0.4 to 0.45 (45% of screen width)
-    backgroundColor: '#333',
+    flex: 0.45,
+    backgroundColor: '#f9f9f9', // light gray instead of dark
     borderRightWidth: 1,
-    borderRightColor: '#000',
+    borderRightColor: '#ccc', // light border
   },
   resultsSection: {
-    flex: 0.55, // Changed from 0.6 to 0.55 (55% of screen width)
+    flex: 0.55,
     padding: 10,
     backgroundColor: '#fff',
   },
@@ -284,7 +285,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     height: 40,
-    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)', // softened dark overlay
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 10,
@@ -303,16 +304,17 @@ const styles = StyleSheet.create({
   },
   row: {
     flexDirection: 'row',
-    backgroundColor: '#fff',
+    backgroundColor: '#fff', // changed from white with dark borders to plain white
     alignItems: 'stretch', // Add this to ensure equal height
     justifyContent: 'space-between', // Add this to ensure even spacing
     paddingHorizontal: 1, // reduced from 2
   },
   rowHeader: {
     fontWeight: 'bold',
-    color: '#fff',
+    color: '#fff', // change text color to white
     textAlign: 'center',
-    backgroundColor: '#000',
+    backgroundColor: '#000', // revert to black background
+    borderRadius: 4, // added border radius
   },
   bhagyashriHeader: {
     fontSize: 16,
@@ -322,7 +324,9 @@ const styles = StyleSheet.create({
     fontSize: 11,
     padding: 4,  // reduced padding
     paddingVertical: 2,  // even smaller vertical padding
-    backgroundColor: '#333',  // slightly lighter background
+    backgroundColor: '#000', // revert to black background
+    color: '#fff', // ensure text is white
+    borderRadius: 4, // added border radius
   },
   timeColumn: {
     width: '15%',  // reduced from 17%
@@ -331,9 +335,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#fff',
     borderRadius: 6,
-    borderColor: '#000',
+    borderColor: '#ccc', // soft gray border instead of black
     borderWidth: 1,
-    shadowColor: '#000',
+    shadowColor: '#ccc',
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.2,
     shadowRadius: 2,
@@ -346,9 +350,9 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   resultBoxWrapper: {
-    width: '15%',  // reduced from 17%
+    width: '17%',  // reduced from 17%%' to better fit 5 columns without extra gaps
     aspectRatio: 1.5,  // Changed from 1 to 1.5 to make height smaller
-    margin: 1, // reduced from 2
+    margin: 1, // reduced from 2 remains
   },
   resultBox: {
     flex: 1,
@@ -356,13 +360,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 4, // reduced from 6 to adjust for smaller height
     borderRadius: 6,
-    backgroundColor: '#fff',
-    shadowColor: '#000',
+    backgroundColor: '#fff', // white background for result boxes
+    shadowColor: '#ccc',
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.2,
     shadowRadius: 2,
     elevation: 3,
-    borderColor: '#000',
+    borderColor: '#ccc',
     borderWidth: 1,
   },
   resultValue: {
@@ -380,14 +384,14 @@ const styles = StyleSheet.create({
     height: 50,
     backgroundColor: '#fff',
     borderRadius: 15,
-    shadowColor: '#000',
+    shadowColor: '#ccc',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     elevation: 5,
     justifyContent: 'center',
     alignItems: 'center',
-    borderColor: '#000',
+    borderColor: '#ccc',
     borderWidth: 1,
     opacity: 0,
   },
@@ -406,8 +410,8 @@ const styles = StyleSheet.create({
   },
   fadeText: {
     fontSize: 18,
-    color: '#fff',
-    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+    color: '#000',
+    backgroundColor: 'rgba(255, 255, 255, 0.9)', // light overlay
     padding: 10,
     borderRadius: 5,
   },

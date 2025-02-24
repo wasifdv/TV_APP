@@ -4,13 +4,13 @@ export const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: 'row',
-    backgroundColor: '#fff',
+    backgroundColor: '#fff', // kept white
   },
   leftPanel: {
     width: '50%',
     padding: 10,
     borderRightWidth: 2,
-    borderRightColor: 'red',
+    borderRightColor: 'red',  // keeping accent red
   },
   rightPanel: {
     width: '50%',
@@ -43,14 +43,14 @@ export const styles = StyleSheet.create({
     aspectRatio: 1,
     padding: 10,
     borderWidth: 2,
-    borderColor: '#000',
+    borderColor: '#ccc', // changed from black to light gray
     alignItems: 'center',
     justifyContent: 'center',
     transform: [{ translateZ: 0 }], // Hardware acceleration
     willChange: 'transform', // Performance hint
   },
   timeText: {
-    color: 'red',
+    color: 'red', // accent remains red
     fontWeight: 'bold',
   },
 });
