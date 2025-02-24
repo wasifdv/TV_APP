@@ -93,13 +93,16 @@ const TimeCard = ({ time }) => {
 
 const BettingRow = ({ rowData, showTimeCard, hideResultTime }) => {
   return (
-    <View style={styles.row}>
+    <View style={[styles.row, styles.BettingRow]}>
       <View style={styles.timeColumn}>
         <Text style={styles.timeText}>{rowData.time}</Text>
       </View>
       {rowData.results.map((result, idx) => (
         <View key={idx} style={styles.resultBoxWrapper}>
-          <ResultBox result={result} hideResultTime={hideResultTime} />
+          <ResultBox 
+            result={result} 
+            hideResultTime={hideResultTime && rowData.id !== 'bhagyashri2'}
+          />
         </View>
       ))}
     </View>
@@ -295,12 +298,15 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
   },
   itemContainer: {
-    marginBottom: 10,
-    marginHorizontal: 10,
+    marginBottom: 6, // reduced from 10
+    marginHorizontal: 6, // reduced from 10
   },
   row: {
     flexDirection: 'row',
     backgroundColor: '#fff',
+    alignItems: 'stretch', // Add this to ensure equal height
+    justifyContent: 'space-between', // Add this to ensure even spacing
+    paddingHorizontal: 1, // reduced from 2
   },
   rowHeader: {
     fontWeight: 'bold',
@@ -319,35 +325,36 @@ const styles = StyleSheet.create({
     backgroundColor: '#333',  // slightly lighter background
   },
   timeColumn: {
-    width: 80,
+    width: '15%',  // reduced from 17%
+    aspectRatio: 1.5,  // Changed from 1 to 1.5 to make height smaller
     justifyContent: 'center',
     alignItems: 'center',
-    paddingVertical: 8,  // reduced from 12
-    borderWidth: 1,
-    borderColor: '#000',
-    borderRadius: 6,     // added to match result box
     backgroundColor: '#fff',
+    borderRadius: 6,
+    borderColor: '#000',
+    borderWidth: 1,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.2,
     shadowRadius: 2,
     elevation: 3,
-    margin: 4,
+    margin: 1, // reduced from 2
   },
   timeText: {
     color: '#ff0000',
-    fontSize: 18,
+    fontSize: 18,  // keeping original size for time column
     fontWeight: 'bold',
   },
   resultBoxWrapper: {
-    flex: 1,
-    overflow: 'hidden',
+    width: '15%',  // reduced from 17%
+    aspectRatio: 1.5,  // Changed from 1 to 1.5 to make height smaller
+    margin: 1, // reduced from 2
   },
   resultBox: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 12,
+    padding: 4, // reduced from 6 to adjust for smaller height
     borderRadius: 6,
     backgroundColor: '#fff',
     shadowColor: '#000',
@@ -355,17 +362,16 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 2,
     elevation: 3,
-    margin: 4,
     borderColor: '#000',
     borderWidth: 1,
   },
   resultValue: {
-    fontSize: 16,
+    fontSize: 24,  // increased size
     color: '#000',
-    fontWeight: '500',
+    fontWeight: '600',
   },
   resultTime: {
-    fontSize: 12,
+    fontSize: 16,  // increased size
     color: '#ff0000',
     marginTop: 4,
   },
@@ -404,6 +410,11 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.7)',
     padding: 10,
     borderRadius: 5,
+  },
+  BettingRow: {
+    width: '100%',  // Ensure full width
+    flexDirection: 'row',
+    justifyContent: 'space-between',
   },
 });
 
