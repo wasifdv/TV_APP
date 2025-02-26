@@ -1,14 +1,64 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const webpack = require('webpack');
+const TerserPlugin = require('terser-webpack-plugin');
 
-module.exports = {
-  mode: 'development',
+module.exports = (env, argv) => ({
+  mode: argv.mode || 'development',
   entry: './src/index.web.js',
   output: {
     path: path.resolve(__dirname, 'dist'),
-    filename: 'bundle.js',
+    filename: '[name].[contenthash].js',
+    chunkFilename: '[name].[contenthash].chunk.js',
     clean: true
+  },
+  optimization: {
+    minimize: true,
+    minimizer: [new TerserPlugin({
+      terserOptions: {
+        parse: {
+          ecma: 8,
+        },
+        compress: {
+          ecma: 5,
+          warnings: false,
+          comparisons: false,
+          inline: 2,
+        },
+        mangle: {
+          safari10: true,
+        },
+        output: {
+          ecma: 5,
+          comments: false,
+          ascii_only: true,
+        },
+      },
+    })],
+    splitChunks: {
+      chunks: 'all',
+      maxInitialRequests: 25,
+      minSize: 20000,
+      cacheGroups: {
+        default: false,
+        defaultVendors: false,
+        framework: {
+          chunks: 'all',
+          name: 'framework',
+          test: /(?<!node_modules.*)[\\/]node_modules[\\/](react|react-dom|scheduler|prop-types|use-subscription)[\\/]/,
+          priority: 40,
+          enforce: true,
+        },
+        commons: {
+          test: /[\\/]node_modules[\\/]/,
+          name(module, chunks) {
+            const packageName = module.context.match(/[\\/]node_modules[\\/](.*?)([\\/]|$)/)[1];
+            return `npm.${packageName.replace('@', '')}`;
+          },
+          priority: 20,
+        },
+      },
+    },
   },
   module: {
     rules: [
@@ -18,16 +68,19 @@ module.exports = {
         use: {
           loader: 'babel-loader',
           options: {
-            cacheDirectory: true,
+            sourceType: 'unambiguous',
             presets: [
-              '@babel/preset-env',
-              '@babel/preset-react',
-              '@babel/preset-typescript'
+              ['@babel/preset-env', {
+                modules: 'auto',
+                targets: {
+                  browsers: ['>0.25%', 'not ie 11', 'not op_mini all']
+                }
+              }],
+              '@babel/preset-react'
             ],
             plugins: [
-              '@babel/plugin-proposal-class-properties',
-              '@babel/plugin-proposal-private-methods',
-              '@babel/plugin-proposal-private-property-in-object'
+              '@babel/plugin-transform-runtime',
+              '@babel/plugin-proposal-class-properties'
             ]
           }
         }
@@ -43,55 +96,45 @@ module.exports = {
     ]
   },
   resolve: {
-    extensions: ['.web.js', '.web.tsx', '.tsx', '.ts', '.js'],
+    extensions: ['.web.js', '.js', '.jsx'],
     alias: {
-      'react-native$': 'react-native-web'
+      'react-native$': 'react-native-web',
+      '@components': path.resolve(__dirname, 'src/components/'),
+      '@utils': path.resolve(__dirname, 'src/utils/'),
     },
     fallback: {
-      'react-native-video': false,
-      module: false,
-      process: false
-    },
-    preferRelative: true,
-    mainFields: ['browser', 'module', 'main']
+      'process': require.resolve('process/browser')
+    }
   },
   plugins: [
     new HtmlWebpackPlugin({
-      template: './public/index.html'
-    }),
-    new webpack.ProvidePlugin({
-      process: 'process'
+      template: path.join(__dirname, 'public', 'index.html')
     }),
     new webpack.DefinePlugin({
-      'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development'),
-      'process.env': JSON.stringify(process.env)
+      'process.env.NODE_ENV': JSON.stringify(argv.mode || 'development')
     }),
-    new webpack.NoEmitOnErrorsPlugin(),
-    new webpack.ProgressPlugin()
+    new webpack.ProvidePlugin({
+      process: 'process/browser'
+    })
   ],
-  cache: {
-    type: 'filesystem'
-  },
-  target: ['web', 'es5'],
-  optimization: {
-    moduleIds: 'named',
+  performance: {
+    maxEntrypointSize: 1000000,
+    maxAssetSize: 1000000,
+    hints: argv.mode === 'production' ? 'warning' : false
   },
   devServer: {
     static: {
       directory: path.join(__dirname, 'public'),
     },
-    compress: true,
-    port: 'auto', // This will automatically find an available port
     hot: true,
-    historyApiFallback: true,
-    client: {
-      overlay: {
-        errors: true,
-        warnings: false,
-      },
-    }
+    port: 8080,
+    historyApiFallback: true
   },
+  cache: {
+    type: 'filesystem'
+  },
+  target: ['web', 'es5'],
   stats: {
     errorDetails: true
   }
-};
+});
