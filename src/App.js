@@ -92,50 +92,66 @@ const App = () => {
   }, []);
 
   const renderItem = ({ item }) => (
-    <View style={{ marginBottom: 1, marginHorizontal: 6 }}>
+    <View style={{ 
+      marginBottom: 1, 
+      marginHorizontal: 6,
+      marginTop: 0, // Remove any top margin
+    }}>
       {item.header ? (<View style={{
         alignItems: 'center',
         justifyContent: 'center',
         backgroundColor: '#1a1a1a',
         borderRadius: 3,
         marginBottom: 0.5,
-        height: item.id.includes('market') ? 16 : 28,
+        height: item.id.includes('market') ? 16 : 40, // Made market headers much thinner (16px), kept Bhagyashri tall (40px)
         boxShadow: '0px 1px 3px rgba(0, 0, 0, 0.15)',
         background: 'linear-gradient(145deg, #1a1a1a 0%, #2c2c2c 100%)'
       }}><Text style={{ 
-        fontWeight: '600',
+        fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
+        fontWeight: '500',
         color: '#ffffff',
-        padding: 0.5,
-        paddingHorizontal: 8,
-        fontSize: item.id.includes('market') ? 10 : 14,
-        lineHeight: item.id.includes('market') ? 12 : 18,
+        fontSize: item.id.includes('market') ? 10 : 16, // Made market text smaller
+        lineHeight: item.id.includes('market') ? 12 : 24, // Adjusted line height for thinner market headers
         textAlign: 'center',
         width: '100%',
-        letterSpacing: 0.3
+        padding: 0.5,
+        paddingHorizontal: 12,
+        letterSpacing: 0.5, // Added letter spacing for clarity
+        textTransform: 'capitalize' // Ensures proper capitalization
       }}>{item.header}</Text></View>) : null}
       <BettingRow rowData={item} hideResultTime={item.id === 'bhagyashri2'} />
     </View>
   );
 
-  return (<View style={{ flex: 1, backgroundColor: '#FFCACF' }}>
+  return (<View style={{ flex: 1, backgroundColor: '#EBF4FF' }}>{/* Changed from #FFCACF to light blue #EBF4FF */}
     <Header />
-    <View style={{ flex: 1, flexDirection: 'row', backgroundColor: '#FFCACF' }}>
+    <View style={{ 
+      flex: 1, 
+      flexDirection: 'row', 
+      backgroundColor: '#EBF4FF',
+      marginTop: 0, // Remove any top margin
+    }}>
       <View style={{ 
         flex: 0.45,
         backgroundColor: '#f8f8f8', 
         borderRightWidth: 1, 
-        borderRightColor: '#e0e0e0' 
+        borderRightColor: '#e0e0e0',
+        marginTop: 0, // Remove any top margin
       }}><VideoPlayer /></View>
       <View style={{ 
         flex: 0.55,
         padding: 4,
+        paddingTop: 0, // Remove top padding
         paddingRight: 2,
-        backgroundColor: '#FFCACF'
+        backgroundColor: '#EBF4FF' // Changed background color
       }}><FlatList
         data={rows}
         renderItem={renderItem}
         keyExtractor={item => item.id}
         showsVerticalScrollIndicator={false}
+        contentContainerStyle={{
+          paddingTop: 0 // Remove FlatList content top padding
+        }}
       /></View>
     </View>
     <Animated.View style={{ 

@@ -9,7 +9,7 @@ export const styles = StyleSheet.create({
     borderRadius: 4,
   },
   timeColumn: {
-    width: '15%',
+    width: '17%',
     aspectRatio: 1.5,
     justifyContent: 'center',
     alignItems: 'center',
@@ -18,11 +18,6 @@ export const styles = StyleSheet.create({
     borderColor: '#555',
     borderWidth: 1,
     margin: 2,
-  },
-  timeText: {
-    color: '#FF0000',
-    fontSize: 18,
-    fontWeight: 'bold',
   },
   resultBoxWrapper: {
     width: '17%',
@@ -40,13 +35,13 @@ export const styles = StyleSheet.create({
     borderWidth: 1,
   },
   resultValue: {
-    fontSize: 24,
+    fontSize: 28,
     color: '#fff',
     fontWeight: '600',
   },
   resultTime: {
-    fontSize: 16,
+    fontSize: 18,
     color: '#FF4500',
-    marginTop: 4,
-  },
+    marginTop: 2,
+  }
 });

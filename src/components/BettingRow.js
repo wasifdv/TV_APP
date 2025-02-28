@@ -22,16 +22,19 @@ const ResultBox = ({ result, hideResultTime }) => {
       justifyContent: 'center',
       alignItems: 'center',
       padding: 2, // Reduced padding to accommodate larger text
-      borderRadius: 8,
-      backgroundColor: '#ffffff',
-      boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.05)',
+      borderRadius: 10, // Adjusted border radius
+      backgroundColor: 'rgba(255, 255, 255, 0.95)', // Slightly transparent
+      backdropFilter: 'blur(8px)', // Blur effect
+      boxShadow: '0 8px 12px -3px rgba(0, 0, 0, 0.1)', // Adjusted shadow
       transform: 'translateY(0)',
-      transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+      transition: 'all 0.3s ease',
       ':hover': {
-        transform: 'translateY(-2px)',
-        boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.08)',
+        transform: 'translateY(-4px)',
+        boxShadow: '0 15px 20px -5px rgba(0, 0, 0, 0.1)', // Adjusted shadow
+        backgroundColor: 'rgba(255, 255, 255, 1)',
       },
-      background: 'linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%)'
+      border: '2px solid rgba(0, 0, 0, 0.15)', // Increased border thickness and darkness
+      background: 'linear-gradient(145deg, rgba(255, 255, 255, 1), rgba(248, 249, 250, 0.95))'
     }, { opacity: fadeAnim }]}>
       <Text style={{ 
         fontSize: 28, // Increased from 24
@@ -67,28 +70,33 @@ const BettingRow = ({ rowData, hideResultTime }) => (
     marginBottom: 1,
   }}>{/* Remove whitespace between tags */}
     <View style={{
-      width: '17%',
-      aspectRatio: 1.5,
+      width: '16.5%', // Adjusted from 17%
+      aspectRatio: 1.3, // Adjusted from 1.5
       justifyContent: 'center',
       alignItems: 'center',
-      backgroundColor: '#ffffff',
-      borderRadius: 8,
+      backgroundColor: 'rgba(255, 255, 255, 0.95)',
+      borderRadius: 10, // Adjusted border radius
       margin: 0.25,
-      boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.05)',
-      background: 'linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%)'
+      backdropFilter: 'blur(8px)',
+      boxShadow: '0 8px 12px -3px rgba(0, 0, 0, 0.1)', // Adjusted shadow
+      border: '2px solid rgba(0, 0, 0, 0.15)', // Increased border thickness and darkness
+      background: 'linear-gradient(145deg, rgba(255, 255, 255, 1), rgba(248, 249, 250, 0.95))'
     }}>{/* Remove whitespace between tags */}
-      <Text style={{ 
-        color: '#FF0000', 
-        fontSize: 18, 
-        fontWeight: '600',
-        textAlign: 'center',
-        letterSpacing: -0.3
-      }}>{rowData.time}</Text>
+      {/* Only show time if it's not bhagyashri2 */}
+      {rowData.id !== 'bhagyashri2' && (
+        <Text style={{ 
+          color: '#FF0000', 
+          fontSize: 18, 
+          fontWeight: '600',
+          textAlign: 'center',
+          letterSpacing: -0.3
+        }}>{rowData.time}</Text>
+      )}
     </View>{/* Remove whitespace between tags */}
     {rowData.results.map((result, idx) => (
       <View key={idx} style={{
-        width: '17%',
-        aspectRatio: 1.5,
+        width: '16.5%', // Adjusted from 17%
+        aspectRatio: 1.3, // Adjusted from 1.5
         margin: 0.25,
       }}>{/* Remove whitespace between tags */}
         <ResultBox result={result} hideResultTime={hideResultTime && rowData.id !== 'bhagyashri2'} />

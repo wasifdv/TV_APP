@@ -31,7 +31,7 @@ const Header = () => {
       justifyContent: 'center',
       alignItems: 'center',
       height: 100,
-      backgroundColor: '#ffffff',
+      backgroundColor: '#EBF4FF', // Changed from '#ffffff' to match main app background
       paddingVertical: 16,
       paddingHorizontal: 20,
       borderBottomWidth: 2,
