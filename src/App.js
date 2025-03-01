@@ -101,7 +101,7 @@ const App = () => {
         alignItems: 'center',
         justifyContent: 'center',
         backgroundColor: '#1a1a1a',
-        borderRadius: 3,
+        borderRadius: 8, // Increased from 3 to 8
         marginBottom: 0.5,
         height: item.id.includes('market') ? 16 : 40, // Made market headers much thinner (16px), kept Bhagyashri tall (40px)
         boxShadow: '0px 1px 3px rgba(0, 0, 0, 0.15)',
