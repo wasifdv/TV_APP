@@ -55,18 +55,6 @@ const App = () => {
       time: '08:00',
       results: Array(5).fill().map(() => generateNewResult()),
     },
-    {
-      id: 'market5',
-      header: 'Market 5',
-      time: '08:00',
-      results: Array(5).fill().map(() => generateNewResult()),
-    },
-    {
-      id: 'market6',
-      header: 'Market 6',
-      time: '08:00',
-      results: Array(5).fill().map(() => generateNewResult()),
-    },
   ]);
   const fadeAnim = useRef(new Animated.Value(0)).current;
 
@@ -123,27 +111,28 @@ const App = () => {
     </View>
   );
 
-  return (<View style={{ flex: 1, backgroundColor: '#EBF4FF' }}>{/* Changed from #FFCACF to light blue #EBF4FF */}
+  return (<View style={{ flex: 1, backgroundColor: '#EBF4FF' }}>
     <Header />
     <View style={{ 
       flex: 1, 
       flexDirection: 'row', 
       backgroundColor: '#EBF4FF',
-      marginTop: 0, // Remove any top margin
+      height: 'calc(100vh - 100px)', // Subtract header height
+      overflow: 'hidden',            // Prevent scrolling
     }}>
       <View style={{ 
         flex: 0.45,
-        backgroundColor: '#f8f8f8', 
+        backgroundColor: '#EBF4FF',
         borderRightWidth: 1, 
         borderRightColor: '#e0e0e0',
-        marginTop: 0, // Remove any top margin
+        overflow: 'hidden',          // Prevent scrolling
       }}><VideoPlayer /></View>
       <View style={{ 
         flex: 0.55,
         padding: 4,
-        paddingTop: 0, // Remove top padding
         paddingRight: 2,
-        backgroundColor: '#EBF4FF' // Changed background color
+        backgroundColor: '#EBF4FF',
+        overflow: 'auto',           // Allow scrolling only in right panel
       }}><FlatList
         data={rows}
         renderItem={renderItem}

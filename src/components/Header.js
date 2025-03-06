@@ -38,6 +38,8 @@ const Header = () => {
       borderBottomColor: '#e0e0e0',
       boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)',
       overflow: 'hidden', // Important for marquee effect
+      position: 'relative',  // Added position relative
+      zIndex: 2,            // Added higher z-index
     }}>
       <Animated.Text style={{
         color: '#333333',

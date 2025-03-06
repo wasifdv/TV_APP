@@ -92,6 +92,18 @@ module.exports = (env, argv) => ({
       {
         test: /\.(png|jpe?g|gif|svg)$/i,
         type: 'asset/resource'
+      },
+      {
+        test: /\.(png|jpe?g|gif)$/i,
+        use: [
+          {
+            loader: 'file-loader',
+            options: {
+              name: '[name].[ext]',
+              outputPath: 'images/'
+            }
+          }
+        ]
       }
     ]
   },
